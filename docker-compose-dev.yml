@@ -1,0 +1,51 @@
+version: "3.9"
+services:
+  redis_dev:
+    container_name: "redis_dev"
+    image: "redis:7-alpine"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - local_net_dev
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  db_dev:
+    container_name: story_mysql_dev
+    image: mariadb:11
+    env_file:
+      - "./.env"
+    networks:
+      - local_net_dev
+    volumes:
+      - ./init-story-db-mysql.sql:/docker-entrypoint-initdb.d/init-story.db.sql
+      - mysql_data_dev:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  story_go_api_dev:
+    container_name: "story_api_dev"
+    image: storyapi:dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile_Dev
+    working_dir: /app
+    volumes:
+      - ./:/app/ # mount source code to container
+    networks:
+      - local_net_dev
+    ports:
+      - "8080:8080"
+      - "8001:8001" # pprof debug data
+    depends_on:
+      - db_dev
+      - redis_dev
+    command: [ "-c", ".air.toml" ]
+
+
+networks:
+  local_net_dev:
+
+volumes:
+  mysql_data_dev:

@@ -1,0 +1,586 @@
+definitions:
+  DTO.CreateStoryRequest:
+    properties:
+      attachedFile:
+        example: http://example.com/myfile.pdf
+        type: string
+      backgroundColor:
+        example: '#RRGGBB'
+        type: string
+      backgroundImage:
+        example: http://example.com/myimage.jpg
+        type: string
+      externalWebLink:
+        example: http://example.com
+        type: string
+      fromTime:
+        example: "2020-01-01T00:00:00Z"
+        type: string
+      isShareable:
+        example: true
+        type: boolean
+      status:
+        allOf:
+        - $ref: '#/definitions/DTO.Status'
+        example: private/public
+      storyName:
+        example: My first story
+        type: string
+      toTime:
+        example: "2020-12-31T23:59:59Z"
+        type: string
+    type: object
+  DTO.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  DTO.GuestResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+      userAgent:
+        example: Mozilla/5.0
+        type: string
+    type: object
+  DTO.LoginResponse:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+    type: object
+  DTO.NewGuestReq:
+    properties:
+      displayDetails:
+        example: 1920x1080
+        type: string
+      operatingSystem:
+        example: Linux
+        type: string
+      versionNumber:
+        example: 1
+        type: integer
+    type: object
+  DTO.RegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
+  DTO.Status:
+    enum:
+    - private
+    - public
+    type: string
+    x-enum-varnames:
+    - StatusPrivate
+    - StatusPublic
+  DTO.StoriesResponse:
+    properties:
+      stories:
+        items:
+          $ref: '#/definitions/DTO.StoryResponse'
+        type: array
+    type: object
+  DTO.StoryRequest:
+    properties:
+      attachedFile:
+        type: string
+      backgroundColor:
+        type: string
+      backgroundImage:
+        type: string
+      creatorUserId:
+        type: integer
+      externalWebLink:
+        type: string
+      fromTime:
+        type: string
+      isShareable:
+        type: boolean
+      status:
+        $ref: '#/definitions/DTO.Status'
+      storyID:
+        type: integer
+      storyName:
+        type: string
+      toTime:
+        type: string
+    type: object
+  DTO.StoryResponse:
+    properties:
+      attachedFile:
+        type: string
+      backgroundColor:
+        type: string
+      backgroundImage:
+        type: string
+      createdAt:
+        type: string
+      creatorUserId:
+        type: integer
+      externalWebLink:
+        type: string
+      fromTime:
+        type: string
+      isShareable:
+        type: boolean
+      relevance:
+        type: boolean
+      status:
+        $ref: '#/definitions/DTO.Status'
+      storyID:
+        type: integer
+      storyName:
+        type: string
+      toTime:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  DTO.SuccessResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
+  DTO.VerifyReq:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  license:
+    name: GPL 3
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+  termsOfService: http://swagger.io/terms/
+paths:
+  /api/v1/user/edit_story/{story_id}:
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing story with the provided details.
+      parameters:
+      - description: Story ID to be edited
+        in: path
+        name: story_id
+        required: true
+        type: integer
+      - description: Story details to be edited
+        in: body
+        name: story
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.StoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.StoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - JwtAuth: []
+      summary: Edit a story
+      tags:
+      - story
+      - user
+  /guest/delete:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - GuestAuth: []
+      summary: Delete a guest token
+      tags:
+      - guest
+  /guest/new:
+    post:
+      consumes:
+      - application/json
+      description: Generate a guest token for anonymous access.
+      parameters:
+      - description: Guest details
+        in: body
+        name: guest
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.NewGuestReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/DTO.GuestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      summary: Generate a guest token
+      tags:
+      - guest
+  /guest/scan/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Scan a story using a guest token.
+      parameters:
+      - description: Story ID to be scanned
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Guest token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - GuestAuth: []
+      summary: Scan a story
+      tags:
+      - story
+      - guest
+  /guest/stories:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a story feed based on specified options.
+      parameters:
+      - description: Sort the stories by a field (e.g., 'created')
+        in: query
+        name: sort_by
+        type: string
+      - description: Limit the number of returned stories
+        in: query
+        name: limit
+        type: integer
+      - description: Offset the returned stories
+        in: query
+        name: offset
+        type: integer
+      - description: 'Filter stories by start date (e.g.: 2006-01-02T15:04:05)'
+        in: query
+        name: from_date
+        type: string
+      - description: 'Filter stories by end date (e.g: 2006-01-02T15:04:05)'
+        in: query
+        name: to_date
+        type: string
+      - description: Guest token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.StoriesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - GuestAuth: []
+      summary: Get story feed
+      tags:
+      - story
+      - guest
+  /guest/verify:
+    post:
+      consumes:
+      - application/json
+      description: Check the validity of a guest token.
+      parameters:
+      - description: Guest token to be checked
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.VerifyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+      summary: Check a guest token
+      tags:
+      - guest
+  /user/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the user account associated with the provided JWT token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - JwtAuth: []
+      summary: Delete user account
+      tags:
+      - user
+  /user/delete_story/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a story with the provided ID.
+      parameters:
+      - description: Story ID to be deleted
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - JwtAuth: []
+      summary: Delete a story
+      tags:
+      - story
+      - user
+      x-order: 8
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user with their credentials and retrieve an access
+        token.
+      parameters:
+      - description: User login credentials
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/DTO.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      summary: User login
+      tags:
+      - user
+  /user/new_story:
+    post:
+      consumes:
+      - application/json
+      description: Create a new story with the provided details.
+      parameters:
+      - description: New story details
+        in: body
+        name: story
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.CreateStoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/DTO.StoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - JwtAuth: []
+      summary: Create a new story
+      tags:
+      - user
+      - story
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with the provided details.
+      parameters:
+      - description: User registration details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/DTO.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - user
+  /user/stories:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all posted stories of the user based on specified options.
+      parameters:
+      - description: Sort the stories by a field (e.g., 'created')
+        in: query
+        name: sort_by
+        type: string
+      - description: Limit the number of returned stories
+        in: query
+        name: limit
+        type: integer
+      - description: Offset the returned stories
+        in: query
+        name: offset
+        type: integer
+      - description: Filter stories by start date (2006-01-02T15:04:05Z07:00)
+        in: query
+        name: from_date
+        type: string
+      - description: Filter stories by end date (2006-01-02T15:04:05Z07:00)
+        in: query
+        name: to_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DTO.StoriesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/DTO.ErrorResponse'
+      security:
+      - JwtAuth: []
+      summary: Get all posted stories of the user
+      tags:
+      - story
+      - user
+      x-order: 5
+securityDefinitions:
+  GuestAuth:
+    description: Just put the guest api key in header.
+    in: header
+    name: X-Guest-Token
+    type: apiKey
+  JwtAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+  prod_redis:
+    container_name: "redis_prod"
+    image: "redis:7-alpine"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - local_net
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  prod_db:
+    container_name: story_mysql_prod
+    image: mariadb:11
+    env_file:
+      - "./.env"
+    networks:
+      - local_net
+    volumes:
+      - ./init-story-db-mysql.sql:/docker-entrypoint-initdb.d/init-story.db.sql
+      - mysql_data:/var/lib/mysql
+
+  prod_story_go_api:
+    container_name: "story_api_prod"
+    image: storyapi:prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config.yml:/app/config.yml
+    networks:
+      - local_net
+    ports:
+      - "8080:8080"
+    depends_on:
+      - prod_db
+      - prod_redis
+
+networks:
+  local_net:
+
+volumes:
+  mysql_data:

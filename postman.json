@@ -1,0 +1,980 @@
+{
+	"info": {
+		"_postman_id": "acaa3dbf-b0b3-4e50-8082-026c0b2aece5",
+		"name": "GoStoryAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28434964"
+	},
+	"item": [
+		{
+			"name": "Guest",
+			"item": [
+				{
+					"name": "GuestStory",
+					"item": [
+						{
+							"name": "ScanStory",
+                          "event": [
+                            {
+                              "listen": "test",
+                              "script": {
+                                "exec": [
+                                  "pm.test('Response status code is 200', function () {",
+                                  "    pm.response.to.have.status(200);",
+                                  "})",
+                                  "",
+                                  "pm.test('Success field is present in the response', function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    pm.expect(responseData.success).to.exist;",
+                                  "})",
+                                  "",
+                                  "pm.test('Success field value is true', function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    pm.expect(responseData.success).to.be.true;",
+                                  "})",
+                                  "",
+                                  "pm.test('Response time is less than 500ms', function () {",
+                                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                                  "})"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            },
+                            {
+                              "listen": "prerequest",
+                              "script": {
+                                "exec": [
+                                  ""
+                                ],
+                                "type": "text/javascript"
+                              }
+                            }
+                          ],
+							"request": {
+                              "auth": {
+                                "type": "apikey",
+                                "apikey": [
+                                  {
+                                    "key": "key",
+                                    "value": "X-Guest-Token",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "key": "value",
+                                    "value": "{{guest_token}}",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "key": "in",
+                                    "value": "header",
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+								"method": "POST",
+								"header": [],
+								"body": {
+                                  "mode": "formdata",
+                                  "formdata": []
+								},
+								"url": {
+                                  "raw": "{{base}}api/v1/guest/scan/:id",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"guest",
+                                      "scan",
+                                      ":id"
+                                    ],
+                                  "variable": [
+                                    {
+                                      "key": "id",
+                                      "value": "7"
+                                    }
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "StoryFeed",
+                          "event": [
+                            {
+                              "listen": "test",
+                              "script": {
+                                "exec": [
+                                  "pm.test(\"Response status code is 200\", function () {",
+                                  "    pm.response.to.have.status(200);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"The 'stories' array is present and contains at least one element\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData).to.be.an('object');",
+                                  "  pm.expect(responseData.stories).to.exist.and.to.be.an('array').that.is.not.empty;",
+                                  "});"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            },
+                            {
+                              "listen": "prerequest",
+                              "script": {
+                                "exec": [
+                                  ""
+                                ],
+                                "type": "text/javascript"
+                              }
+                            }
+                          ],
+							"request": {
+                              "auth": {
+                                "type": "apikey",
+                                "apikey": [
+                                  {
+                                    "key": "key",
+                                    "value": "X-Guest-Token",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "key": "value",
+                                    "value": "{{guest_token}}",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "key": "in",
+                                    "value": "header",
+                                    "type": "string"
+										}
+                                ]
+								},
+                              "method": "GET",
+                              "header": [],
+								"url": {
+                                  "raw": "{{base}}api/v1/guest/stories",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"guest",
+										"stories"
+									],
+									"query": [
+										{
+                                          "key": "sort_by",
+                                          "value": "created",
+											"disabled": true
+										},
+										{
+											"key": "offset",
+                                          "value": "40",
+                                          "disabled": true
+                                        },
+                                      {
+                                        "key": "from_date",
+                                        "value": "2023-06-25T11:30:00Z",
+                                        "disabled": true
+                                      },
+                                      {
+                                        "key": "to_date",
+                                        "value": "2023-07-06T06:40:08.462Z",
+                                        "disabled": true
+                                      },
+                                      {
+                                        "key": "limit",
+                                        "value": "2",
+                                        "disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "NewGuest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = JSON.parse(responseBody)",
+                                  "pm.environment.set(\"guest_token\", resp.token);",
+                                  "pm.test(\"Response status code is 201\", function () {",
+                                  "  pm.response.to.have.status(201);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response has the required fields - userAgent and token\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "",
+                                  "  pm.expect(responseData).to.be.an('object');",
+                                  "  pm.expect(responseData.userAgent).to.exist;",
+                                  "  pm.expect(responseData.token).to.exist;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "  pm.test(\"userAgent is a non-empty string\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.userAgent).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+                                  "  });",
+                                  "",
+                                  "",
+                                  "pm.test(\"Token is a non-empty string\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData.token).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response time is less than 500ms\", function () {",
+                                  "  pm.expect(pm.response.responseTime).to.be.below(500);",
+                                  "});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"versionNumber\": 1,\n    \"operatingSystem\": \"Linux/Windows/OSX/OpenBSD\",\n    \"displayDetails\": \"1600x900\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}api/v1/guest/new",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"guest",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VerifyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+                                  "",
+                                  "pm.test(\"Response status code is 200\", function () {",
+                                  "    pm.expect(pm.response.code).to.equal(200);",
+                                  "  });",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response has the field 'success'\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData).to.have.property('success');",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Verify that 'success' field value is a boolean\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "",
+                                  "  pm.expect(responseData.success).to.be.a('boolean');",
+                                  "});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{guest_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}api/v1/guest/verify",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"guest",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+                                  ""
+								],
+                              "type": "text/javascript"
+                            }
+                        },
+                      {
+                        "listen": "prerequest",
+                        "script": {
+                          "exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+                      "auth": {
+                        "type": "apikey",
+                        "apikey": [
+                          {
+                            "key": "key",
+                            "value": "X-Guest-Token",
+                            "type": "string"
+                          },
+                          {
+                            "key": "value",
+                            "value": "{{guest_token}}",
+                            "type": "string"
+                          },
+                          {
+                            "key": "in",
+                            "value": "header",
+                            "type": "string"
+                          }
+                        ]
+                      },
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+                          "raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}api/v1/guest/delete",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"guest",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "UserStory",
+					"item": [
+						{
+							"name": "NewStory",
+                          "event": [
+                            {
+                              "listen": "prerequest",
+                              "script": {
+                                "exec": [
+                                  "// // Calculate the from_time by adding 30 minutes to the current time",
+                                  "// const fromTime = new Date();",
+                                  "// fromTime.setMinutes(fromTime.getMinutes() + 30);",
+                                  "// pm.collectionVariables.set(\"from_time\", fromTime.toISOString());",
+                                  "",
+                                  "// // Calculate the to_time by adding 10 hours to the current time",
+                                  "// const toTime = new Date();",
+                                  "// toTime.setHours(toTime.getHours() + 10);",
+                                  "// pm.collectionVariables.set(\"to_time\", toTime.toISOString());",
+                                  "// console.log(fromTime.toISOString())",
+                                  "",
+                                  "const moment = require('moment');",
+                                  "",
+                                  "// Get the current time",
+                                  "const currentTime = moment();",
+                                  "",
+                                  "// Calculate the from_time by adding 30 minutes and convert to +03:30 time zone",
+                                  "const fromTime = currentTime.clone().add(30, 'minutes').utcOffset('Asia/Tehran');",
+                                  "pm.collectionVariables.set('from_time', fromTime.toISOString());",
+                                  "",
+                                  "// Calculate the to_time by adding 10 hours and convert to +03:30 time zone",
+                                  "const toTime = currentTime.clone().add(10, 'hours').utcOffset('Asia/Tehran');",
+                                  "pm.collectionVariables.set('to_time', toTime.toISOString());"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            },
+                            {
+                              "listen": "test",
+                              "script": {
+                                "exec": [
+                                  "",
+                                  "pm.test(\"Response status code is 201\", function () {",
+                                  "    pm.response.to.have.status(201);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"storyID is a non-zero integer\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData).to.be.an('object');",
+                                  "  pm.expect(responseData.storyID).to.be.a('number').and.to.not.equal(0, \"storyID should be a non-zero integer\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"creatorUserId is a non-zero integer\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.creatorUserId).to.be.a('number').and.to.not.equal(0);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"fromDate is a non-empty string\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "",
+                                  "  pm.expect(responseData.fromDate).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"fromTime is a non-empty string\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.fromTime).to.exist.and.to.be.a('string').and.to.not.be.empty;",
+                                  "});"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            }
+                          ],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+                                  "raw": "{\n   \"fromDate\": \"{{from_time}}\",\n   \"toDate\": \"{{to_time}}\",\n   \"fromTime\": \"{{from_time}}\",\n   \"toTime\": \"{{to_time}}\",\n   \"storyName\": \"{{$randomWords}}\",\n   \"backgroundColor\": \"{{$randomHexColor}}\",\n   \"backgroundImage\": \"{{$randomImageUrl}}\",\n   \"isShareable\": true,\n   \"attachedFile\": \"{{$randomImageUrl}}\",\n   \"externalWebLink\": \"{{$randomUrl}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}api/v1/user/new_story",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"user",
+										"new_story"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAllStories",
+                          "event": [
+                            {
+                              "listen": "test",
+                              "script": {
+                                "exec": [
+                                  "pm.test(\"Content-Type is present\", function () {",
+                                  "    pm.response.to.have.header(\"Content-Type\");",
+                                  "});",
+                                  "",
+                                  "pm.test(\"Response status code is 200\", function () {",
+                                  "    pm.response.to.have.status(200);",
+                                  "});",
+                                  "",
+                                  "pm.test(\"The 'stories' array is present in the response and contains at least one element\", function () {",
+                                  "    var jsonData = pm.response.json();",
+                                  "    pm.expect(jsonData.stories).to.exist.and.to.be.an('array').with.lengthOf.at.least(1);",
+                                  "});",
+                                  "",
+                                  "pm.test(\"fromTime is present and is a string\", function () {",
+                                  "    var jsonData = pm.response.json();",
+                                  "    pm.expect(jsonData).to.be.an('object');",
+                                  "    pm.expect(jsonData.stories).to.be.an('array');",
+                                  "",
+                                  "    jsonData.stories.forEach(function (story) {",
+                                  "        pm.expect(story.fromTime).to.be.a('string');",
+                                  "    });",
+                                  "});"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            },
+                            {
+                              "listen": "prerequest",
+                              "script": {
+                                "exec": [
+                                  ""
+                                ],
+                                "type": "text/javascript"
+                              }
+                            }
+                          ],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+                                  "raw": "{{base}}api/v1/user/stories?limit=10",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"user",
+										"stories"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+                                          "value": "10",
+                                          "disabled": true
+										},
+										{
+											"key": "sort_by",
+                                          "value": "updated",
+                                          "disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteStory",
+                          "event": [
+                            {
+                              "listen": "test",
+                              "script": {
+                                "exec": [
+                                  "pm.test(\"Response status code is 200\", function () {",
+                                  "  pm.response.to.have.status(200);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Check if 'success' field is present in the response\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "",
+                                  "    pm.expect(responseData.success).to.exist;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"The value of the 'success' field is true\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData.success).to.be.true;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response body is not empty\", function () {",
+                                  "  pm.expect(pm.response.text()).to.not.be.empty;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response time is within an acceptable range\", function () {",
+                                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                                  "});"
+                                ],
+                                "type": "text/javascript"
+                              }
+                            },
+                            {
+                              "listen": "prerequest",
+                              "script": {
+                                "exec": [],
+                                "type": "text/javascript"
+                              }
+                            }
+                          ],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base}}api/v1/user/delete_story/:id",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"user",
+										"delete_story",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+                                          "value": "6"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "EditStory",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{jwt_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+                                  "raw": "{\n    \"storyID\": 70,\n    \"fromDate\": \"2023-08-12T16:57:29.806Z\",\n    \"fromTime\": \"2023-08-12T16:57:29.806Z\",\n    \"toDate\": \"2023-08-13T02:27:29.806Z\",\n    \"toTime\": \"2023-08-13T02:27:29.806Z\",\n    \"storyName\": \"XXXX\",\n    \"backgroundColor\": \"#7e5429\",\n    \"backgroundImage\": \"XXXXXXXXXXXX\",\n    \"isShareable\": true,\n    \"externalWebLink\": \"http://justus.biz\",\n    \"createdAt\": \"2023-08-12T19:57:29.853055702+03:30\",\n    \"updatedAt\": \"2023-08-12T19:57:29.853055842+03:30\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+                                  "raw": "{{base}}api/v1/user/edit_story/:id",
+									"host": [
+										"{{base}}api"
+									],
+									"path": [
+										"v1",
+										"user",
+                                      "edit_story",
+                                      ":id"
+                                    ],
+                                  "variable": [
+                                    {
+                                      "key": "id",
+                                      "value": "70"
+                                    }
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var resp = JSON.parse(responseBody)",
+                                  "pm.environment.set(\"email\", resp.email);",
+                                  "pm.test(\"Response status code is 201\", function () {",
+                                  "    pm.expect(pm.response.code).to.equal(201);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Email is a required field and should not be empty\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.email).to.exist.and.to.have.lengthOf.at.least(1, \"Email should not be empty\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Token is a required field and should not be empty\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData).to.be.an('object');",
+                                  "  pm.expect(responseData.token).to.exist.and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Email is in a valid email format\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email is not in a valid format\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Token is a string with a length greater than 0\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData.token).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+                                  "});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomUUID}}@gmail.com\",\n    \"password\": \"pasdpoaspdoa\",\n    \"name\": \"{{$randomUserName}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}api/v1/user/register",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody)",
+                                  "postman.setEnvironmentVariable(\"jwt_token\", data.token);",
+                                  "",
+                                  "pm.test(\"Response status code is 200\", function () {",
+                                  "  pm.expect(pm.response.code).to.equal(200);",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Response has required fields - email and token\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData).to.be.an('object');",
+                                  "  pm.expect(responseData.email).to.exist;",
+                                  "  pm.expect(responseData.token).to.exist;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Email field should not be empty\", function () {",
+                                  "  const responseData = pm.response.json();",
+                                  "  ",
+                                  "  pm.expect(responseData.email).to.exist.and.to.have.lengthOf.at.least(1, \"Email should not be empty\");",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Token field is not empty\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData.token).to.exist.and.to.not.be.empty;",
+                                  "});",
+                                  "",
+                                  "",
+                                  "pm.test(\"Token is a string with a valid format\", function () {",
+                                  "    const responseData = pm.response.json();",
+                                  "    ",
+                                  "    pm.expect(responseData).to.be.an('object');",
+                                  "    pm.expect(responseData.token).to.be.a('string');",
+                                  "    pm.expect(responseData.token).to.match(/[a-zA-Z0-9]{32}/);",
+                                  "});"
+                                ],
+                              "type": "text/javascript"
+                            }
+                        },
+                      {
+                        "listen": "prerequest",
+                        "script": {
+                          "exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"pasdpoaspdoa\",\n    \"name\": \"mozimoz\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}api/v1/user/login",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/user/delete",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Story",
+			"item": [
+				{
+					"name": "StoryInfo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+                          "raw": "{{base}}api/v1/story/:id",
+							"host": [
+								"{{base}}api"
+							],
+							"path": [
+								"v1",
+								"story",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+                                  "value": "49"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiZXhwIjoxNjk0NjA1NzcxLCJpYXQiOjE2ODk0MjE3NzF9.k8pqelKp37q8mSqzWqfTzoGvTTm7yU0IuLfF61bn7nw"
+        },
+      {
+        "key": "from_time",
+        "value": ""
+      },
+      {
+        "key": "to_time",
+        "value": ""
+		}
+	]
+}

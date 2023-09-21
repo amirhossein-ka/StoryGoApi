@@ -1,0 +1,9 @@
+FROM golang:1.20-alpine AS dev
+WORKDIR /app
+ENV CGO_ENABLED=0
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+RUN go install github.com/cosmtrek/air@latest
+
+ENTRYPOINT ["/go/bin/air", "-c", "/app/.air.toml"]

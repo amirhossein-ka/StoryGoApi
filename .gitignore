@@ -1,0 +1,10 @@
+.env
+.idea
+pgdata
+appconfig.yml
+service/mock/
+StoryGoAPI.exe
+StoryGoAPI
+config.yml
+config.*
+config.*.*
